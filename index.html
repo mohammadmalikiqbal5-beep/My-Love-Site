@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Naa Favorite Person Kosam ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Quicksand:wght@500;700&family=Caveat:wght@600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #0d0814;
+            color: #fff;
+            font-family: 'Nunito', sans-serif;
+            overflow: hidden; 
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(255,255,255,0.05) 1px, transparent 1px),
+                radial-gradient(circle at 80% 70%, rgba(255,255,255,0.05) 1px, transparent 1px);
+            background-size: 80px 80px;
+        }
+
+        @keyframes waveFloat {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-3px); }
+            100% { transform: translateY(0px); }
+        }
+
+        h1, h2, h3, p {
+            animation: waveFloat 3.5s ease-in-out infinite;
+            display: block; 
+            text-shadow: none; 
+        }
+
+        h1 { animation-delay: 0s; }
+        h2 { animation-delay: 0.3s; }
+        p { animation-delay: 0.6s; }
+        h3 { animation-delay: 0.9s; }
+
+        .pink-text { 
+            color: #ff3377; 
+            text-shadow: none; 
+        }
+
+        #prog-circle {
+            filter: drop-shadow(0 0 12px #ff3377);
+            transition: stroke-dashoffset 0.1s linear;
+        }
+
+        .star-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .bg-star {
+            position: absolute;
+            color: #ffffff;
+            font-size: 8px;
+            filter: drop-shadow(0 0 5px #fff) drop-shadow(0 0 10px #fff);
+            animation: floatUp 6s linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(110vh) translateX(0); opacity: 0; }
+            20% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) translateX(20px); opacity: 0; }
+        }
+
+        .screen {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            transition: opacity 0.8s ease, filter 0.8s ease, transform 0.8s ease;
+            opacity: 0;
+            filter: blur(20px);
+            transform: scale(1.1);
+            pointer-events: none;
+            will-change: opacity, filter;
+            overflow: hidden; 
+        }
+
+        .screen.active {
+            opacity: 1;
+            filter: blur(0px);
+            transform: scale(1);
+            pointer-events: all;
+            z-index: 10;
+        }
+
+        h1, h2 { font-family: 'Quicksand', sans-serif; margin-bottom: 20px; font-weight: 700; line-height: 1.3; }
+        h1 { font-size: 2.5rem; }
+        h2 { font-size: 1.8rem; }
+        p { font-size: 1.1rem; color: #dcdcdc; line-height: 1.6; max-width: 400px; margin-bottom: 30px; }
+        
+        button {
+            background: #ff3377; 
+            color: #fff;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-size: 1.5rem;
+            font-family: 'Caveat', cursive;
+            cursor: pointer;
+            transition: 0.3s ease;
+            position: relative;
+            z-index: 100;
+            box-shadow: 0 0 15px rgba(255, 51, 119, 0.6);
+            margin-top: 15px;
+        }
+
+        button:active { 
+            transform: scale(0.95); 
+            box-shadow: 0 0 30px #ff3377, 0 0 50px #ff3377; 
+        }
+
+        .spawned-star {
+            position: fixed;
+            font-size: 2rem;
+            pointer-events: none;
+            text-shadow: 0 0 20px #ffdf00, 0 0 40px #fff700, 0 0 60px #ffffff;
+            animation: starPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            z-index: 1;
+        }
+
+        @keyframes starPop {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+
+        .universe-box {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 30px;
+            filter: drop-shadow(0 0 10px rgba(255, 51, 119, 0.5));
+        }
+
+        .orbit {
+            position: absolute;
+            border: 3px solid rgba(255,255,255,0.4);
+            border-radius: 50%;
+        }
+
+        .orbit1 { width: 150px; height: 150px; animation: spin 10s linear infinite; }
+        .orbit2 { width: 220px; height: 220px; animation: spin 15s linear reverse infinite; }
+
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .pulse { animation: pulse 1.5s ease-in-out infinite alternate; filter: drop-shadow(0 0 8px #ff3377); }
+        @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.1); } }
+
+        /* Magic Gift Box Animation */
+        .magic-box {
+            font-size: 5rem;
+            cursor: pointer;
+            display: inline-block;
+            animation: floatUpDown 2s ease-in-out infinite, glowBox 1.5s infinite alternate;
+            margin-bottom: 20px;
+            transition: transform 0.2s;
+        }
+
+        .magic-box:active {
+            transform: scale(0.8);
+        }
+
+        @keyframes floatUpDown {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @keyframes glowBox {
+            0% { filter: drop-shadow(0 0 10px #ff3377); }
+            100% { filter: drop-shadow(0 0 30px #ffd700); }
+        }
+
+        .watermark {
+            position: fixed;
+            bottom: 15px;
+            right: 15px;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 0.9rem;
+            z-index: 9999;
+        }
+    </style>
+</head>
+<body onclick="handleStarTap(event)">
+
+    <div class="watermark">@malikiqbal</div>
+    <div class="star-bg" id="star-bg"></div>
+    <audio id="main-song" src="https://files.catbox.moe/ph9ndg.mp4" preload="auto"></audio>
+
+    <div id="screen-0" class="screen active">
+        <svg style="width:70px; height:70px; fill:#ff3377;" class="pulse" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        <h1>Hey <span style="color: #ffd700;">Vasantha...</span></h1>
+        <p>Nee Kosam Oka Chinna Surprise Undi ✨</p>
+        <button onclick="startExperience(event)">Open Chey &rarr;</button>
+    </div>
+
+    <div id="screen-1" class="screen">
+        <h2 id="tap-text">Entha Cheekatiga Undi Ikkada, Kada?</h2>
+        <p id="tap-subtext" style="color: #ff3377;">Screen Meeda Ekkadaina Tap Chey ✨</p>
+        <button id="cont-btn" style="display:none; margin-top: 20px;" onclick="vibrate(150); nextScreen(1); event.stopPropagation();">Continue Chey &rarr;</button>
+    </div>
+
+    <div id="screen-2" class="screen">
+        <h2>Nuvvu Naaku Entha Istamo Telusa?</h2>
+        <div style="position:relative; width:220px; height:220px; display:flex; justify-content:center; align-items:center; margin-bottom: 20px;">
+            <svg style="position:absolute; transform:rotate(-90deg); overflow: visible;" width="200" height="200">
+                <circle cx="100" cy="100" r="90" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="6"></circle>
+                <circle id="prog-circle" cx="100" cy="100" r="90" fill="none" stroke="#ff3377" stroke-width="10" stroke-dasharray="565" stroke-dashoffset="565" stroke-linecap="round"></circle>
+            </svg>
+            <svg id="hold-heart" style="width:70px; height:70px; fill:#ff3377; z-index:2;" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        </div>
+        <h1 id="prog-text">0%</h1>
+        <button onmousedown="startHold()" onmouseup="endHold()" ontouchstart="startHold(event)" ontouchend="endHold(event)">Press Chesi Pattuko</button>
+    </div>
+
+    <div id="screen-3" class="screen">
+        <div style="position: relative; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 2px solid #ff3377; padding: 40px; border-radius: 20px; cursor: pointer;" onclick="vibrate(150); nextScreen(3); event.stopPropagation();">
+            <span style="font-size: 4rem;">✉️</span>
+            <div class="pulse" style="position: absolute; top: -15px; right: -15px; font-size: 2rem;">💖</div>
+        </div>
+        <p style="margin-top:25px;">Nee Kosam Oka Message Undi, Tap Chey</p>
+    </div>
+
+    <div id="screen-4" class="screen">
+        <div style="background: rgba(255,255,255,0.08); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); padding: 25px; border-radius: 15px; border-left: 4px solid #ff3377; text-align: left; max-width: 320px;">
+            <p style="font-family: 'Caveat'; font-size: 1.5rem; margin-bottom: 10px;">Dear Vasantha,</p>
+            <p style="font-family: 'Caveat'; font-size: 1.3rem;">Nuvvu Nijamga Chala Sweet Mariyu Special. Nee Matalu Mariyu Nee Vibe Evari Roju Nyna Baguchesthayi. Ninnu Kalavadam Naa Adrushtam. Eppudu Ilaage Navvuthu Undu! ✨</p>
+        </div>
+        <button style="margin-top:30px;" onclick="vibrate(150); nextScreen(4); event.stopPropagation();">Inkokati Undi... &rarr;</button>
+    </div>
+
+    <!-- Screen 5 Adjusted Margins -->
+    <div id="screen-5" class="screen">
+        <div class="universe-box" style="margin-bottom: 10px; height: 220px;">
+            <div class="orbit orbit1"><span style="position:absolute; top:-10px; left:50%;">⭐</span></div>
+            <div class="orbit orbit2"><span style="position:absolute; bottom:-10px; left:50%;">💜</span></div>
+            <svg style="width:70px; height:70px; fill:#ff3377;" class="pulse" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        </div>
+        <h2 style="margin-bottom: 10px;">Nuvvu Nijamga Adbhutham!</h2>
+        <h3 style="font-family: 'Caveat'; font-size: 2.2rem; color: #ff3377; margin-bottom: 15px;">Eppudu Ilaage Navvuthu Undu 😊</h3>
+        
+        <!-- Adjusted button styling to pull it up into the screen view -->
+        <button id="final-btn" onclick="triggerLove(); event.stopPropagation();" style="margin-top: 5px; box-shadow: 0 0 20px #ff3377;">💖 Nuvve The Best!</button>
+    </div>
+
+    <div id="screen-6" class="screen">
+        <h2 id="final-magic-text" style="font-family: 'Caveat', cursive; font-size: 2.5rem; color: #ff3377; margin-bottom: 20px;">Oka Chivari Magic Trick... ✨</h2>
+        
+        <div id="magic-box-container" class="magic-box" onclick="fireMagic(event)">
+            🎁
+        </div>
+        <p id="magic-hint" style="color: #dcdcdc; font-size: 1rem;">Gift Meeda Tap Chey!</p>
+
+        <div id="magic-msg" style="display:none; animation: waveFloat 3.5s ease-in-out infinite;">
+            <p style="font-family: 'Quicksand', sans-serif; font-size: 1.6rem; color: #fff; line-height: 1.5;">
+                Nee Smile Nijamga Oka <span style="color: #ffd700;">Magic</span>!<br>
+                Eppudu Ilaage Santhoshanga Undu! ✨😊
+            </p>
+        </div>
+
+        <button id="reset-btn" style="display:none; margin-top: 30px;" onclick="resetExperience(event)">Malli Chudalani Unda? ❤️</button>
+    </div>
+
+    <script>
+        function vibrate(ms) { if (navigator.vibrate) navigator.vibrate(ms); }
+
+        function createBgStars() {
+            const container = document.getElementById('star-bg');
+            for(let i = 0; i < 8; i++) {
+                setTimeout(() => {
+                    const star = document.createElement('div');
+                    star.className = 'bg-star';
+                    star.innerHTML = '★'; 
+                    star.style.left = Math.random() * 100 + 'vw';
+                    star.style.animationDuration = (Math.random() * 4 + 5) + 's';
+                    container.appendChild(star);
+                    setTimeout(() => star.remove(), 9000);
+                }, i * 600); 
+            }
+        }
+        setInterval(createBgStars, 6000); createBgStars();
+
+        let currentActiveScreen = 0;
+        function nextScreen(id) {
+            const current = document.getElementById(`screen-${id}`);
+            const next = document.getElementById(`screen-${id+1}`);
+            if (next) {
+                current.classList.remove('active');
+                setTimeout(() => { next.classList.add('active'); currentActiveScreen = id + 1; }, 50);
+            }
+        }
+
+        function startExperience(e) {
+            e.stopPropagation();
+            vibrate(150); 
+            const song = document.getElementById('main-song');
+            song.currentTime = 0;
+            song.play().catch(error => console.log("Playback error: ", error));
+            nextScreen(0);
+        }
+
+        let starCount = 0;
+        function handleStarTap(e) {
+            if (currentActiveScreen !== 1 || starCount >= 3) return;
+            starCount++;
+            vibrate(150); 
+            const x = e.clientX || (e.touches && e.touches[0].clientX);
+            const y = e.clientY || (e.touches && e.touches[0].clientY);
+            const star = document.createElement('div');
+            star.className = 'spawned-star';
+            star.innerText = '⭐';
+            star.style.left = x + 'px'; star.style.top = y + 'px';
+            document.getElementById('screen-1').appendChild(star);
+            
+            const txt = document.getElementById('tap-text');
+            if (starCount === 1) txt.innerText = "Antha Chala Dull Mariyu Boring Ga Undi...";
+            else if (starCount === 2) txt.innerText = "Kani Eppudaithe Neetho Matalu Modalayyayo...";
+            else if (starCount === 3) {
+                txt.innerText = "Life Inka Bright Mariyu Better Ga Marindi ✨";
+                document.getElementById('tap-subtext').style.opacity = "0";
+                document.getElementById('cont-btn').style.display = 'block';
+            }
+        }
+
+        function triggerLove() { vibrate([200, 100, 200]); nextScreen(5); }
+
+        let progress = 0; let holdTimer; let ringComplete = false; 
+
+        function startHold(e) {
+            if(e) e.stopPropagation();
+            if(ringComplete) return; 
+            clearInterval(holdTimer);
+            holdTimer = setInterval(() => {
+                progress += 1.5; vibrate(100); 
+                if (progress >= 100) {
+                    progress = 100; ringComplete = true; 
+                    vibrate([200, 100, 300, 100, 400]); 
+                    clearInterval(holdTimer); setTimeout(() => nextScreen(2), 500);
+                }
+                updateProgress();
+            }, 40);
+        }
+        function endHold(e) {
+            if(e) e.stopPropagation();
+            if(ringComplete) return; 
+            clearInterval(holdTimer);
+            holdTimer = setInterval(() => {
+                progress -= 2; if (progress <= 0) { progress = 0; clearInterval(holdTimer); }
+                updateProgress();
+            }, 20);
+        }
+        function updateProgress() {
+            const circle = document.getElementById('prog-circle');
+            const offset = 565 - (progress / 100) * 565;
+            circle.style.strokeDashoffset = offset;
+            document.getElementById('prog-text').innerText = Math.floor(progress) + "%";
+            document.getElementById('hold-heart').style.transform = `scale(${1 + progress/100})`;
+        }
+
+        function fireMagic(e) {
+            e.stopPropagation();
+            
+            // 4 Seconds string vibration pattern
+            // Total sum of array roughly equals 4000ms
+            vibrate([500, 200, 500, 200, 500, 200, 500, 200, 500, 200, 500]);
+            
+            // Confetti Explosion
+            var duration = 3 * 1000;
+            var end = Date.now() + duration;
+
+            (function frame() {
+                confetti({
+                    particleCount: 5,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: ['#ff3377', '#ffd700', '#ffffff', '#ff99cc']
+                });
+                confetti({
+                    particleCount: 5,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: ['#ff3377', '#ffd700', '#ffffff', '#ff99cc']
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+
+            // Hide Gift Box, Show Message & Button
+            document.getElementById('magic-box-container').style.display = 'none';
+            document.getElementById('magic-hint').style.display = 'none';
+            document.getElementById('final-magic-text').style.display = 'none';
+            
+            document.getElementById('magic-msg').style.display = 'block';
+            document.getElementById('reset-btn').style.display = 'inline-block';
+        }
+
+        function resetExperience(e) {
+            e.stopPropagation();
+            
+            // Stop and reset audio
+            const song = document.getElementById('main-song');
+            song.pause();
+            song.currentTime = 0;
+
+            // Reset variables
+            currentActiveScreen = 0;
+            starCount = 0;
+            progress = 0;
+            ringComplete = false;
+            updateProgress();
+
+            // Clear tapped stars & reset screen 1 texts
+            document.querySelectorAll('.spawned-star').forEach(star => star.remove());
+            document.getElementById('tap-text').innerText = "Entha Cheekatiga Undi Ikkada, Kada?";
+            document.getElementById('tap-subtext').style.opacity = "1";
+            document.getElementById('cont-btn').style.display = "none";
+
+            // Reset Screen 6 elements
+            document.getElementById('magic-box-container').style.display = 'inline-block';
+            document.getElementById('magic-hint').style.display = 'block';
+            document.getElementById('final-magic-text').style.display = 'block';
+            document.getElementById('magic-msg').style.display = 'none';
+            document.getElementById('reset-btn').style.display = 'none';
+
+            // Reset Screens Visibility
+            document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
+            document.getElementById('screen-0').classList.add('active');
+        }
+    </script>
+</body>
+</html>
